@@ -1,0 +1,4 @@
+》	Q1:react项目,发现super被编辑器加上了删除线?React类组件中不推荐使用super()?
+	A:已弃用了可选的context参数，因为它引用了旧版React上下文（v16.3之前的版本）
+	https://reactjs.org/docs/context.html
+	https://zh-hans.reactjs.org/docs/context.html
