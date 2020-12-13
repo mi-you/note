@@ -1,0 +1,464 @@
+》 let声明之前的执行瞬间被称为"暂时性死区"
+	严格来说，let在JavaScript运行时中也会被提升，但由于"暂时性死区"的缘故，实际上不能在声明之前使用let变量。
+	因此从写JavaScript代码的角度说，let的提升跟var是不一样的
+》 typeof操作符只会返回6个字符串值：number、boolean、undefined、function、object、string;typeof a或typeof(a)都是可以的
+   instanceof 用于检测对象的具体类型，可检测出Array之类的
+》 "use strict"开启严格模式
+》  八进制数以：0o开头
+	十六进制数以：0x开头
+	科学计数法e不区分大小写
+》	Number.NEGATIVE_INFINITY：-infinity;
+	Number.POSITIVE_INFINITY:infinity
+	Number.MAX_VALUE
+	Number.MIN_VALUE
+》	虽然NaN被转成布尔值是false且false == false返回true，但是NaN == NaN返回的是false
+》	Number():用于任意类型
+		null和''被转换成数值时是0，undefined是NaN;true转换成1,false转换成0
+		对象被转成数字时会先调用valueOf(),如果转换的结果是NaN则再调用toString()
+	parseInt():主要用于将字符串转换为数字
+		第一个字符不是数字加号或减号都会返回NaN,''会返回NaN,'.3'会返回NaN
+		支持第二个参数，用于指定底数(进制数):parseInt('AF',16) === parseInt('0xAF'),parseInt(11,7) === 8
+	parseFloat():主要用于将字符串转换成数字
+		只解析10进制因此不能指定底数(指定无效)
+》 toString():
+		多数情况下不接受参数,不过对数值调用这个方法时可以传递一个底数参数:let num = 111;num.toString(2)
+		null和undefined没有toString方法
+	String():
+		如果值有toString()方法就调用
+		如果值是null:返回:'null'
+		如果值是undefined返回:'undefined'
+》 模板字面量标签函数
+	function simpleTag(strings,...expressions){}
+	simpleTag`${ 6 } + ${ 9 } = ${ 15 }`这里会有4个参数传给simpleTag函数
+	1、['',' + ',' = ','']
+	2、6
+	3、9
+	4、15
+》 String.raw函数的使用
+   let a = 22;
+   String.raw`${a}Hi\n\u000A!` 输出值:22Hi\n\u000A,任何类型的转义形式都会失效，保留原样输出
+   String.raw({raw:["a","b"]},a) 输出值:a22b;这个raw里的转义形式会生效
+   Sring.raw({raw:['a','\u00a9']},a) 输出值:a22©
+   
+》	幂等操作:特点是其任意多次执行所产生的影响均与一次执行的影响相同
+》 Symbol 类型
+	Symbol不能和new一起使用 new Symbol()//报错
+》 Symbol.for() //使用全局符号注册表
+	使用此函数创建Symbol会被添加到全局运行时注册表
+	Symbol('a') === Symbol('a');//false
+	Symbol.for('a') === Symbol.for('a');//true
+	Symbol.for() === Symbol.for();//true
+	Symbol.for() === Symbol.for('undefined') //true
+》 Symbol.keyFor() //查询全局注册表,参数不为Symbol类型时会报错
+	let s = Symbol.for('foo')
+	console.log(Symbol.keyFor(s)) // foo
+	不在全局注册表的符号(Symbol)会返回undefined
+》 使用Symbol符号作为属性
+	反思可以使用字符串或数值作为属性的地方，都可以使用符号。
+	这就包括了对象字面量属性和Object.defineProperty()/Object.defineProperties()
+	let s1 = Symbol('foo'),s2 = Symbol('bar'),s3 = Symbol('baz'),s4 = Symbol('qux');
+	let o = {
+		[s1]:'foo val'
+	}
+	// {[Symbol('foo')]:'foo val'}
+	// o[s1] = 'foo val'
+	Object.defineProperty(o,s2,{value:'bar val'})
+	Object.defineProperties(o,{
+		[s3]:{value:'baz val'},
+		[s4]:{value:'qux val'}
+	})
+》 	1、Object.getOwnPropertyNames()返回对象实例的常规属性数组 // 常规名称数组
+	2、Object.getOwnPropertySymbols()返回对象实例的符号属性数组 // Symbol数组
+	3、Object.getOwnPropertyDescriptors()返回同时包含常规和符号属性描述符的对象 // 对象，key:value;value是对象信息的详细描述
+	4、Reflect.ownKeys()返回两种类型的key数组  // 1,2的合集
+	Reflect.ownKeys()返回一个包含所有自身属性(不包含继承属性)的数组。(类似于 Object.keys(), 但不会受enumerable影响)
+	https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Reflect
+》 常用的内置符号
+	》Symbol.asyncIterator:一个方法，该方法返回对象默认的AsyncIterator为键的函数
+		在ES2018规范定义
+	》Symbol.hasInstance:一个方法，该方法决定一个构造器对象是否认可一个对象是它的实例
+		在ES6 instanceof 操作符会使用Symbol.hasInstance函数来确定关系
+			function parent(){};let child = new parent();
+			console.log(parent[Symbol.hasInstance](child)) // true
+		这个属性定义在Function的原型上，因此默认所有函数和类上都可以调用，可以在继承的类上通过静态方法重新定义这个函数
+		class Bar {}
+		class Baz extends Bar{
+			static [Symbol.hasInstance](){
+				return false;
+			}
+		}
+		let b = new Baz()
+		console.log(Bar[Symbol.hasInstance](Baz)) //true
+		console.log(Baz instanceof Bar) //true
+		console.log(Baz[Symbol.hasInstance](b)) //false
+		console.log(b instanceof Baz) //false
+	》Symbol.isConcatSpreadable:一个布尔值，如果是true则意味着对象应该用Array.prototype.concat()打平其数组元素
+		数组对象默认会被打平到已有数组，类数组对象默认情况下会被追加到数组末尾,其他不是类数组对象的对象把值设成true时会被忽略
+		let a = ['aaa']
+		let b = ['bbb']
+		let c = {length:1,0:'ccc'}
+		let d = new Set().add('ddd')
+		console.log(a[Symbol.isConcatSpreadable]) //undefined,b,c,d都是undefined
+		console.log(a.concat(b)) //['aaa','bbb'] 数组的默认行为
+		console.log(a.concat(c)) //['aaa',{...}] 类数组默认行为
+		console.log(a.concat(d)) //['aaa',Set(1)]
+		b[Symbol.isConcatSpreadable] = false
+		console.log(a.concat(b)) //['aaa',Array(1)]
+		c[Symbol.isConcatSpreadable] = true
+		console.log(a.concat(c)) //['aaa','ccc']
+		d[Symbol.isConcatSpreadable] = true
+		console.log(a.concat(d)) //['aaa'] Set()结构被忽略了
+	》Symbol.iterator:一个方法，该方法返回对象默认的迭代器。由for-of语句使用。换句话说，这个符号表示实现迭代器API的函数
+	》Symbol.match:一个正则表达式方法，该方法用正则表达式去匹配字符串。由String.prototype.match()方法使用
+	》Symbol.replace:一个正则表达式方法，该方法替换一个字符串中匹配的子串。由String.prototype.replace()方法使用
+	》Symbol.search:一个正则表达式方法，该方法返回字符串中匹配正则表达式的索引。由String.prototype.search()方法使用
+	》Symbol.split:一个正则表达式方法，该方法在匹配正则表达式的索引位置拆分字符串。由String.prototype.split()方法调用
+	》class SymbolRegExp {
+		constructor(str){
+			this.str = str || 'foo'
+		}
+		static [Symbol.match](target){//接收一个参数就是调用match()方法的字符串实例
+			return target.includes(this.str);
+		}
+		static [Symbol.replace](target,replacement){//接收两个参数就是调用replace()方法的字符串实例和替换字符串
+			return target.split(this.str).join(replacement);
+		}
+		static [Symbol.search](target){//接收一个参数就是调用match()方法的字符串实例
+			return target.indexOf(this.str)
+		}
+		static [Symbol.split](target){ //接收一个参数就是调用match()方法的字符串实例
+			return target.split(this.str)
+		}
+	}
+		调用上面这个class 类可以'barfoobaz'.split(SymbolRegExp);'barfoobaz'.split(new SymbolRegExp('oo'))
+	》Symbol.species:一个函数值，该函数作为创建派生对象的构造函数。
+		这个属性在内置类型中最常用，用于对内置类型实例方法的返回值暴露实例化派生对象的方法
+	》Symbol.toPrimitive:一个方法，该方法将对象转换为相应的原始值。由ToPrimitive抽象操作使用
+		class Foo{}
+		let foo = new Foo();
+		console.log(3 + foo);//"3[object object]"
+		console.log(3 - foo);//NaN
+		console.log(String(foo)); "[object object]"
+		class Bar{
+			constructor(){
+				this[Symbol.toPrimitive] = function(hint){
+					switch(hint){
+						case 'number':return 3
+						case 'string':return 'string bar'
+						case 'default':
+						default:return 'default bar'
+					}
+				}
+			}
+		}
+		let bar = new Bar();
+		console.log(3 + foo);//"3default bar"
+		console.log(3 - foo);//0
+		console.log(String(foo)); "string bar"
+	》Symbol.toStringTag:一个字符串，该字符串用于创建对象的默认字符串描述。由内置方法Object.prototyoe.toString()使用Symbol符号作为属性
+	
+	
+》Object	
+	》在没有参数的情况下可以省略括号，但是不推荐这么做 let 0 = new Object;
+	》每个Object实例都有如下属性和方法(严格来说BOM,DOM由宿主环境定义和提供的，宿主对象不受ECMA-262约束，所以它们可能不会继承Object)
+		1、constructor
+		2、hasOwnProperty(propertyName)
+		3、isPrototypeOf(object)
+		4、propertyIsEnumerable(propertyName)
+		5、toLocaleString()
+		6、toString()
+		7、ValueOf()
+》位操作符
+	》按位非：~
+	》按位与：&
+	》按位或：|
+	》按位异或:^
+	》左移:<<(空位补0)
+	》有符号右移:>>(右移后出现的空位用符号位的值来填充)
+	》无符号右移:>>>(空位补0)
+》布尔操作符
+	》!:非0数值(包括Infinity) 返回false
+》乘法操作符
+	》Infinity * 0 返回NaN
+》除法操作符
+	》Infinity === Infinity //true
+	》Infinity / Infinity 返回NaN
+》指数操作符(**):ECMAScript 7新增
+	》Math.pow(3,2) === 3 ** 2 === 9
+》关系操作符
+	》和NaN比较时无论是小于还是大于等于结构都是false
+	NaN < 3 //false
+	NaN >= 3 //false
+》等于 不等于 全等 不全等
+	》等于 不等于
+		null 和 undefined相等
+		null 和 undefined不能转换为其他类型的值再进行比较
+		任一操作数为NaN都返回false
+》逗号操作符
+	let a = 1,b = 2;
+	let c = (1,2,3,4) //c=4,这种场景使用不多见
+》for-in:是一种严格的迭代语句，用于枚举对象中的非符号键属性
+	for( property in expression) statement
+	for(const propName in window){ document.write(propName)} //const 不是必须的，推荐const以保证局部变量不被修改
+	可枚举属性都会返回但是返回顺序因浏览器而异
+》for-of:是一种严格的迭代语句，用于遍历可迭代对象的元素
+	for( property of expression) statement
+	for(const el of [1,2,3,4,5]){ document.write(el)}
+》标签语句
+	label:statement
+	start: for(let i=0;i<10;i++){
+		for(let j=0;j<10;j++){
+			break start;
+		}
+	}
+	
+》应尽可能多使用const,由于const声明暗示变量的值是单一类型且不可修改，JavaScript运行时编译器可以将其所有实例都替换成实际值
+	，而不会通过查询表进行变量查找。
+	
+》Date:
+	》Date.parse()和Date.UTC()可以返回日期的毫秒数
+		Date.parse('5/23/2019');Date.UTC(2005,4,5,17,55,55)
+		Date.UTC参数：年、零起点月、日、时、分、秒年月为必填项()
+	》new Date():要基于其他日期和时间创建日期对象必须给其传入毫秒表示，
+		new Date('5/23/2019')会在后台调用Date.parse('5/23/2019')
+		new Date(2019,4,23)会在后台调用Date.UTC(2019,4,23)
+		值得注意的是：隐式调用Date.UTC创建的是本地日期，无论隐式还是显示调用Date.parse()创建的都是本地日期
+		new Date(2019,4,23).getTime() - new Date(Date.UTC(2019,4,23)).getTime()的值是时区差秒数(中国8*60*60*1000)
+		new Date(2019,4,23).getTime() = new Date('5/23/2019') = new Data(Date.parse('5/23/2019'))
+	》Date.now() 返回表示方法执行日期和时间的毫秒数(本地)，这个方法可以方便的计算代码的运行时间
+		let start = Date.now();let end = Date.now()
+
+》	toFixed() // 保留几位小数：接收一个参数，实测不传相当于传0
+	toExponential() // 返回科学计数法：接收一个参数
+	toPrecision() /// 根据情况返回最合理的输出结果：接收一个参数，表示结果中数字的总位数(不包括指数)
+	本质上toPercision方法是根据数值和精度来决定调用toFixed()还是toExponential()
+	》Number.isInteger()方法用于辨别一个数值是否保存为整数，有时候小数后的0可能会让人误认为数值是个浮点数
+	console.log(Number.isInteger(1.00)) //true
+	》Number.isSafeInteger()判断整数是否是安全整数(-2^53+1)~(2^53-1)
+》	page119 - page120的关于字符的内容有时间看看扩展
+》	indeOf(),lastIndexOf()都接受第二个参数表示开始搜索的位置
+	includes(),startWith(),endWith()都接受第二个参数，前两个表示是开始位置，后一个表示字符串"末尾"位置
+	trim(),trimLeft(),trimRight()
+	repeat()表示要将字符串重复多少次
+	padStart(),padEnd()第一个参数是长度，第二个可选的是填充的字符串默认空格
+		let a = 'aa';a.padEnd(4,'b') === aabb
+
+》toLowerCase(),toUpperCase(),toLocaleLowerCase(),toLocaleUpperCase()
+》字符串的replace方法接收两个参数
+	1、RegExp对象或字符串:
+	2、字符串或一个函数:
+		字符串的情况下有几个特殊的字符序列，可以用来插入正则表达式操作的值,详细见page126
+			'abcde'.replace(/(.)/,'*$1.') // *a.*b.*c.*d.*e.
+		函数,详见page126
+			funtion htmlEscape(test){
+				return text.replace(/[<>"&]/,(match,pos,orignalText) => {
+					switch(match){
+						case '<':return '&lt;'
+						case '>':return '&gt;'
+						case '&':return '&amp;'
+						case '"':return '&quot;'
+					}
+				})
+			}
+》字符串的split方法还可以传入第二个参数，即数组大小，确保返回的数组不会超过指定大小
+	let str = 'a,b,c,d,e'
+	console.log(str.split(",",2)) // ['a','b']
+	console.log(str.split(",",0)) // []
+	console.log(str.split(",",-2)) // ['a','b','c','d','e']
+》encodeURI():不会编码属于URL组件的特殊字符，比如冒号、斜杠、问号、井号
+	encodeURIComponent():编码它发现的所有非标准字符
+	使用encodeURI编码整个URI,使用encodeURIComponent编码那些会追加到已有URI后面的字符串
+	decodeURI()和decodeURIComponent()
+》Global:ECMAScript中最特别的对象，代码不会显示的访问它，ECMA-262规定Global对象为一种兜底对象，
+	它所针对的是不属于任何对象的属性和方法。事实上不存在全局变量或全局函数这种东西。在全局作用域中
+	定义的变量和函数都会变成Global对象的属性。isNaN()、isFinite()、parseInt()、parseFloat()
+	实际上都是Global对象的方法
+	Global对象的属性
+		undefined、NaN、Infinity、Object、Array、Sring...更多属性见page 130
+	let global = function(){return this}();可以获取Global对象
+》Math.min(),Math.max()、Math.ceil()、Math.floor()、Math.round()、
+	Math.fround():返回数值最接近的单精度(32位)浮点表示
+	window.crypto.getRandomValues(typeArray)获取密码学要求的安全的随机值，参数是typeArray
+》在使用Arrray构造函数时，new也可以省略
+	let arr1 = new Array('a','b');let arr2 = Array('a','b')
+	[1,2,3,].length === 3 // true
+	[,,,].length === 3 // true
+》Array.from()
+	第一个参数是类数组对象
+	(可选)第二个参数是映射函数
+	(可选)第三用于指定映射函数中this的值。不适用于第二个函数时箭头函数
+	let a = [1,2,3,4]
+	let b = Array.from(a,x => x**2) //[1,4,9,16]
+	let c = Array.from(a,function(x){return x**this.exponent},{exponent:2}) //[1,4,9,16]
+》Array.of()可以把一组参数转换为数组。这个方法用于替代ES6之前常用的Array.prototype.clice.call(arguemnts)
+	console.log(Array.of(1,2,3,4)) //[1,2,3,4]
+	console.log(undefined) //[undefined]
+》let options = [1,,,,5]
+	console.log(options.map(v => 6)) //[6,undefined,undefined,undefined,6]
+	console.log(options.join('-')) //1---5
+	实践中要避免使用数组空位，如果需要可以显示的用undefined值代替
+	let options = [1,undefined,undefined,undefined,5]
+	console.log(options.map(v => 6)) //[6,6,6,6,6]
+》判断一个对象是不是数组：Array.isArray()
+	使用instanceof的问题是假定只有一个全局执行上下文。如果网页有多个框架，可能涉及两个不同的全局上下文，
+	因此就会有两个不同版本的Array构造函数。为了解决这个问题Array.isArray()方法：判断是否为数组不管是在哪个全局
+	上下文创建的。
+》for( const [index,value] of [{},{},{}].entries())
+》fill():可接受第二(b)和第三个参数(c)代表插入的数组索引的范围a≤index＜c
+	const zeroes = [0,0,0,0,0]
+	zeroes.fill(6,1,3) // [0,6,6,0,0]
+》copyWithin():按指定范围浅复制数组中的部分内容，然后将他们插入到指定索引开始的位置
+	let ints = [0,1,2,3,4,5,6,7,8,9]
+	ints.copyWithin(5) //[0,1,2,3,4,0,1,2,3,4]
+	//复制索引5开始的内容，插入到索引0开始的位置
+	ints.copyWithin(0,5) //[5,6,7,8,9,5,6,7,8,9]
+	ints.copyWithin(4,0,3) //[1,2,3,0,1,2,7,8,9]
+》push()和unshift()都接受任意数量的参数
+》sort()函数接受一个比较函数，比较函数接收两个参数，如果第一个参数应该排在第二个参数前面就返回负值
+	sort()和reverse()会改变原数组同时他们也返回原数组的引用
+》断言函数接收3个参数：元素、索引和数组本身。
+	find()和findIndex()方法使用了断言函数，找到匹配项后，这两个方法都不再继续搜索。
+	[{name:1,value:1},{name:2,value:2}].find((element,index,array) => element.value > 0)) //{name:1,value:1}
+》ECMAScript为数组提供了两个归并方法：reduce()和reduceRight()。
+	reduce从第一次遍历到最后一项，reduceRight()从最后一项遍历到第一项。都接受两个参数，归并函数和起点初始值。
+	归并函数接收4个参数：上一个归并值，当前项，当前项索引和数组本身
+	[1,2,3,4].reduce((prev,curr,index,arr) => {console.log('1');return prev + curr}) //1 1 1 10
+》定型数组，DataView,ArrayBuffer见page155
+》Map:为这门语言带来了真正的键值存储机制。可以使用任何JavaScript数据类型作为键，键的比较采用SameValueZero
+	set(),get(),has(),size(),delete(),clear()
+》WeakMap：弱映射中的键只能是Object或继承自Object的类型，由于键值对任何时候都可能被销毁，
+	所有没必要提供其迭代键值对的能力，没有clear()方法
+》Set:add(),has(),size(),delete(),clear()
+
+》生成器函数只会在初次调用next()方法后开始执行
+	function* generationFn(){
+		console.log('foo')
+	}
+	let generationObj = generationFn();// 并不会打印日志
+	generationObj.next();// foo
+	》yield关键字只能在生成器函数内部使用，用在其他地方会抛出错误
+
+》ECMA-262使用一些内部特性来描述属性特征。这些特性是由为JavaScript实现引擎的规范定义的。因此，开发者不能在JavaScript
+	中直接访问这些特性。为了将某个特性标识为内部特性，规范会用两个中括号把特性的名称括起来比如[[Enumerable]]
+	属性分两种：数据属性和访问器属性。
+	》数据属性有四个特性描述他们的行为
+		[[Configurable]]、[[Enumerable]]、[[Writable]]、[[Value]]
+	》一个属性被定义为不可配置后，就不能在变回可配置的了。再次调用Object.defineProperty()并修改writable属性
+		或导致错误。因此虽然可以对同一个属性多次调用Object.defineProperty()但是把configurable设置为false
+		之后就会受限制。在调用Object.defineProperty()后configurable、enumerable、writable不指定默认为false
+》Object.propertyIsEnumerable(),Object.hasOwnProperty()
+》 //这些情况再不同JavaScript引擎中表现不同，但被认为相同
+	+0 === -0 // true
+	+0 === 0 //true
+	-0 === 0 //true
+	// 要确定NaN的相等性，必须使用isNaN()
+	为改善这类情况ECMAScript 6规范新增Object.is()这个方法与===很像，但同时考虑到了上述边界情况。该方法接受两个参数
+	Object.is(+0,-0) // false
+	Object.is(+0,0) // true
+	Object.is(-0,0) // true
+	Object.is(NaN,NaN) //true
+	// 要检查超过两个值，递归地利用相等性传递即可
+	function recursivelyCheckEqual(x,....rest){
+		return Object.is(x,rest[0]) && (rest.length < 2 || recursivelyCheckEqual(...rest));
+	}
+》解构并不要求变量必须在解构表达式中声明，不过，如果是给事先声明的变量赋值，则赋值表达式必须包含在一对括号中
+	let personName,personAge;
+	let person = {name:'aa',age:24};
+	({name:personName,age:personAge} = person);
+	通过这种方式可以给对象赋值
+	let a = {}
+	({name:a.name,age:a.age} = person)
+》使用Object.getPrototypeOf()可以方便的取得一个对象的原型
+	funtion Person(){}
+	let child = new Person() //或new Person
+	child.__proto__ === Person.protoType // true
+	Object.getPrototypeOf(child) === Person.protoType // true
+》Object.setProtoTypeOf()可以重写一个对象的原型，为了避免使用Object.setProtoTypeOf()可能造成的性能下降，
+	可以通过Object.create()来创建一个新对象，同时为其指定原型
+	let biped = {numLegs :2}
+	let person = Object.create(biped);
+	Object.getPrototypeOf(person) === biped // true
+》hasOwnProperty() //不会去原型上查找属性
+》原型和in操作符
+	》有两种方式使用in操作符：单独使用和在for-in循环中使用
+	单独使用时，会在原型上查找属性
+		let a = Object.creact({name:'a'})
+		'name' in a // true name在a的原型链上
+		和hasOwnProperty()一起使用可以判断属性是在实例上还是原型上
+	for-in中使用，也会在原型上查找，[[Enumerable]]为false的实例或原型属性不会被枚举
+	Object.keys()返回实例上可枚举属性
+》Object.create()可接受第二个可选参数，是给新对象定义额外属性的对象，与Object.defineProperties()的第二个参数一样
+
+》实现递归的函数,这个函数避免了严格模式下访问arguments.callee报错的问题
+	const factorial = (function f(num){
+		if(num <= 1){
+			return 1;
+		}else{
+			return num + f(num - 1)
+		}
+	})
+》尾调用优化递归
+	function fib(n){ 
+		return fibImpl(0,1,n)
+	}
+	function fibImpl(a,b,n){
+		if(n===0){return a}
+		return fibImpl(b,a+b,n-1)
+	}
+	console.log(fib(1000))(浏览器轻松计算)
+	原递归(fibb(1000)浏览器处理不了)
+	function fibb(n){
+		if(n<2)return n;
+		return fibb(n-1) + fibb(n-2)
+	}
+	
+	
+/*************************************************************h5扩展*****************************************************/
+
+
+/************************************************************************************************************************/
+》performence.now() //DOMHighResTimeStamp
+	start = performence.now()
+	end = performence.now()
+	end - start
+
+
+/************************************************************ 19 表单 ***************************************************/
+》表单提交
+	<input type='submit' value='提交' />
+	<button type='submit'>提交</button>
+	<input type='image' src='./a.jpg' />
+
+》input 的size属性可以指定文本框的宽度(字数)
+	<input size='10' maxLength='50' />
+》textarea 不能在HTML中指定最大允许字符数
+》两种文本框都支持一个名为select()的方法用于选中全部的文本与之相对，还有一个select事件
+	textbox.value.substring(textbox.selecttionStart,textbox.selecttionEnd)
+	调用select()后文本框会自动获取焦点(Opera除外)
+》setSelectionRange()可以用于选中部分文本：参数第一个字符的索引和停止选择的字符索引
+	textbox.setSelectionRange(0,textbox.value.length)
+	要想看到选择则必须在调用setSelectionRange()之前或之后给文本设置焦点
+》剪切板事件
+	》beforecopy:复制操作发生前
+	》copy:复制操作发生时
+	》beforecut:剪切操作发生前
+	》cut:剪切操作发生时
+	》beforepaste:粘贴操作发生前触发
+	》paste:粘贴操作发生时触发
+》pattern属性可以验证输入值是否有效，结果可以在元素的checkValidity()上查看，validity可以查看具体的无效原因
+	在表单form上调用checkValidity()可以确认整个表单是否有效,
+	在表单form上添加novalidate属性或通过js将改属性设置为true可以避免表单验证
+》select 中的size为选框的可见行数
+
+
+
+
+
+
+
+
+
+
+
+
+
