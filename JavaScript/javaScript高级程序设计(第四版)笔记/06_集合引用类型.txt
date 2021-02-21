@@ -1,3 +1,5 @@
+》6.1Object
+	》对象字面量({})和new Object():在使用对象字面量表示法定义对象时，并不会实际调用 Object 构造函数
 》6.2Array
 	》创建数组
 		》使用Array构造函数：在使用 Array 构造函数时，也可以省略 new 操作符
@@ -163,132 +165,55 @@
 		let sum2 = values.reduce((prev, cur, index, array) => prev + cur,10); // 25
 		
 		
-》定型数组，DataView,ArrayBuffer见page155
-》Map:为这门语言带来了真正的键值存储机制。可以使用任何JavaScript数据类型作为键，键的比较采用SameValueZero
-	set(),get(),has(),size(),delete(),clear()
-》WeakMap：弱映射中的键只能是Object或继承自Object的类型，由于键值对任何时候都可能被销毁，
-	所有没必要提供其迭代键值对的能力，没有clear()方法
-》Set:add(),has(),size(),delete(),clear()
+》6.3定型数组
+	是 ECMAScript 新增的结构，目的是提升向原生库传输数据的效率。实际上，
+	JavaScript 并没有“TypedArray”类型，它所指的其实是一种特殊的包含数值类型的数组。
+	》DataView
+		必须在对已有的 ArrayBuffer 读取或写入时才能创建 DataView 实例
+		const buf = new ArrayBuffer(16); 
+		// DataView 默认使用整个 ArrayBuffer 
+		const fullDataView = new DataView(buf); 
+		alert(fullDataView.byteOffset); // 0 
+		alert(fullDataView.byteLength); // 16 
+		alert(fullDataView.buffer === buf); // true 
+		// 构造函数接收一个可选的字节偏移量和字节长度
+		// byteOffset=0 表示视图从缓冲起点开始
+		// byteLength=8 限制视图为前 8 个字节
+		const firstHalfDataView = new DataView(buf, 0, 8); 
+		alert(firstHalfDataView.byteOffset); // 0 
+		alert(firstHalfDataView.byteLength); // 8 
+		alert(firstHalfDataView.buffer === buf); // true
+	》定性数组：设计定型数组的目的就是提高与 WebGL 等原生库交换二进制数据的效率
+》6.4Map
+	》Object 只能使用数值、字符串或符号作为键。Map可以使用任何JavaScript数据类型作为键，键的比较采用SameValueZero。
+	》与 Object 类型的一个主要差异是，Map 实例会维护键值对的插入顺序
+	》set(),get(),has(),size(),delete(),clear()
+	》delete()返回一个布尔值，表示集合中是否存在要删除的值
+》6.5WeakMap
+	弱映射中的键只能是Object或继承自Object的类型，由于键值对任何时候都可能被销毁，
+	所有没必要提供其迭代键值对的能力
+	》set(),get(),has(),size(),delete()没有clear()方法
+	》弱映射造就了在 JavaScript 中实现真正私有变量的一种新方式
+	》给DOM关联数据
+		const wm = new WeakMap(); 
+		const loginButton = document.querySelector('#login'); 
+		// 给这个节点关联一些元数据
+		wm.set(loginButton, {disabled: true});
+》6.6Set
+	》add(),has(),size(),delete(),clear()
+	》delete()返回一个布尔值，表示集合中是否存在要删除的值
+》6.7WeakSet
+	》弱集合中的值只能是 Object 或者继承自 Object 的类型，没有clear()方法
+	》相比于 WeakMap 实例，WeakSet 实例的用处没有那么大不过，弱集合在给对象打标签时还是有
+	价值的
+	const disabledElements = new WeakSet(); 
+	const loginButton = document.querySelector('#login'); 
+	// 通过加入对应集合，给这个节点打上“禁用”标签
+	disabledElements.add(loginButton); 
+	这样，只要 WeakSet 中任何元素从 DOM 树中被删除，垃圾回收程序就可以忽略其存在，而立即
+	释放其内存（假设没有其他地方引用这个对象）
+》6.8迭代和扩展操作
 
-》生成器函数只会在初次调用next()方法后开始执行
-	function* generationFn(){
-		console.log('foo')
-	}
-	let generationObj = generationFn();// 并不会打印日志
-	generationObj.next();// foo
-	》yield关键字只能在生成器函数内部使用，用在其他地方会抛出错误
-
-》ECMA-262使用一些内部特性来描述属性特征。这些特性是由为JavaScript实现引擎的规范定义的。因此，开发者不能在JavaScript
-	中直接访问这些特性。为了将某个特性标识为内部特性，规范会用两个中括号把特性的名称括起来比如[[Enumerable]]
-	属性分两种：数据属性和访问器属性。
-	》数据属性有四个特性描述他们的行为
-		[[Configurable]]、[[Enumerable]]、[[Writable]]、[[Value]]
-	》一个属性被定义为不可配置后，就不能在变回可配置的了。再次调用Object.defineProperty()并修改writable属性
-		或导致错误。因此虽然可以对同一个属性多次调用Object.defineProperty()但是把configurable设置为false
-		之后就会受限制。在调用Object.defineProperty()后configurable、enumerable、writable不指定默认为false
-》Object.propertyIsEnumerable(),Object.hasOwnProperty()
-》 //这些情况再不同JavaScript引擎中表现不同，但被认为相同
-	+0 === -0 // true
-	+0 === 0 //true
-	-0 === 0 //true
-	// 要确定NaN的相等性，必须使用isNaN()
-	为改善这类情况ECMAScript 6规范新增Object.is()这个方法与===很像，但同时考虑到了上述边界情况。该方法接受两个参数
-	Object.is(+0,-0) // false
-	Object.is(+0,0) // true
-	Object.is(-0,0) // true
-	Object.is(NaN,NaN) //true
-	// 要检查超过两个值，递归地利用相等性传递即可
-	function recursivelyCheckEqual(x,....rest){
-		return Object.is(x,rest[0]) && (rest.length < 2 || recursivelyCheckEqual(...rest));
-	}
-》解构并不要求变量必须在解构表达式中声明，不过，如果是给事先声明的变量赋值，则赋值表达式必须包含在一对括号中
-	let personName,personAge;
-	let person = {name:'aa',age:24};
-	({name:personName,age:personAge} = person);
-	通过这种方式可以给对象赋值
-	let a = {}
-	({name:a.name,age:a.age} = person)
-》使用Object.getPrototypeOf()可以方便的取得一个对象的原型
-	funtion Person(){}
-	let child = new Person() //或new Person
-	child.__proto__ === Person.protoType // true
-	Object.getPrototypeOf(child) === Person.protoType // true
-》Object.setProtoTypeOf()可以重写一个对象的原型，为了避免使用Object.setProtoTypeOf()可能造成的性能下降，
-	可以通过Object.create()来创建一个新对象，同时为其指定原型
-	let biped = {numLegs :2}
-	let person = Object.create(biped);
-	Object.getPrototypeOf(person) === biped // true
-》hasOwnProperty() //不会去原型上查找属性
-》原型和in操作符
-	》有两种方式使用in操作符：单独使用和在for-in循环中使用
-	单独使用时，会在原型上查找属性
-		let a = Object.creact({name:'a'})
-		'name' in a // true name在a的原型链上
-		和hasOwnProperty()一起使用可以判断属性是在实例上还是原型上
-	for-in中使用，也会在原型上查找，[[Enumerable]]为false的实例或原型属性不会被枚举
-	Object.keys()返回实例上可枚举属性
-》Object.create()可接受第二个可选参数，是给新对象定义额外属性的对象，与Object.defineProperties()的第二个参数一样
-
-》实现递归的函数,这个函数避免了严格模式下访问arguments.callee报错的问题
-	const factorial = (function f(num){
-		if(num <= 1){
-			return 1;
-		}else{
-			return num + f(num - 1)
-		}
-	})
-》尾调用优化递归
-	function fib(n){ 
-		return fibImpl(0,1,n)
-	}
-	function fibImpl(a,b,n){
-		if(n===0){return a}
-		return fibImpl(b,a+b,n-1)
-	}
-	console.log(fib(1000))(浏览器轻松计算)
-	原递归(fibb(1000)浏览器处理不了)
-	function fibb(n){
-		if(n<2)return n;
-		return fibb(n-1) + fibb(n-2)
-	}
-	
-	
-/*************************************************************h5扩展*****************************************************/
-
-
-/************************************************************************************************************************/
-》performence.now() //DOMHighResTimeStamp
-	start = performence.now()
-	end = performence.now()
-	end - start
-
-
-/************************************************************ 19 表单 ***************************************************/
-》表单提交
-	<input type='submit' value='提交' />
-	<button type='submit'>提交</button>
-	<input type='image' src='./a.jpg' />
-
-》input 的size属性可以指定文本框的宽度(字数)
-	<input size='10' maxLength='50' />
-》textarea 不能在HTML中指定最大允许字符数
-》两种文本框都支持一个名为select()的方法用于选中全部的文本与之相对，还有一个select事件
-	textbox.value.substring(textbox.selecttionStart,textbox.selecttionEnd)
-	调用select()后文本框会自动获取焦点(Opera除外)
-》setSelectionRange()可以用于选中部分文本：参数第一个字符的索引和停止选择的字符索引
-	textbox.setSelectionRange(0,textbox.value.length)
-	要想看到选择则必须在调用setSelectionRange()之前或之后给文本设置焦点
-》剪切板事件
-	》beforecopy:复制操作发生前
-	》copy:复制操作发生时
-	》beforecut:剪切操作发生前
-	》cut:剪切操作发生时
-	》beforepaste:粘贴操作发生前触发
-	》paste:粘贴操作发生时触发
-》pattern属性可以验证输入值是否有效，结果可以在元素的checkValidity()上查看，validity可以查看具体的无效原因
-	在表单form上调用checkValidity()可以确认整个表单是否有效,
-	在表单form上添加novalidate属性或通过js将改属性设置为true可以避免表单验证
-》select 中的size为选框的可见行数
 
 
 

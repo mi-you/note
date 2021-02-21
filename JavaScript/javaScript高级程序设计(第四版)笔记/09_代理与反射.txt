@@ -1,0 +1,162 @@
+代理和反射为开发者提供了拦截并向基本操作嵌入额外行为的能力
+	》具体地说，可以给目标对象定义一个关联的代理对象，而这个代理对象可以作为抽象的目标对象来使用。在对
+	目标对象的各种操作影响目标对象之前，可以在代理对象中对这些操作加以控制
+	》由于代理是一种新的基础性语言能力，很多转译程序都不能把代理行为转换为之前的 ECMAScript 代码，
+	因为代理的行为实际上是无可替代的。为此，代理和反射只在百分之百支持它们的平台上有用。
+	可以检测代理是否存在，不存在则提供后备代码。不过这会导致代码冗余，因此并不推荐
+
+》9.1代理基础
+	》创建空代理
+		》代理是使用 Proxy 构造函数创建的。这个构造函数接收两个参数：目标对象和处理程序对象
+			缺少其中任何一个参数都会抛出 TypeError。
+			const target = { 
+			 id: 'target' 
+			}; 
+			const handler = {}; 
+			const proxy = new Proxy(target, handler);
+	》定义捕获器
+		》使用代理的主要目的是可以定义捕获器（trap）
+		const target = { 
+		 foo: 'bar' 
+		}; 
+		const handler = { 
+		 // 捕获器在处理程序对象中以方法名为键
+		 get() { 
+		 return 'handler override'; 
+		 } 
+		}; 
+		const proxy = new Proxy(target, handler); 
+		console.log(target.foo); // bar 
+		console.log(proxy.foo); // handler override
+	》捕获器参数和反射API
+		》所有捕获器都可以基于自己的参数重建原始操作，但并非所有捕获器行为都像 get()那么简单。因
+		此，通过手动写码如法炮制的想法是不现实的。实际上，开发者并不需要手动重建原始行为，而是可以
+		通过调用全局 Reflect 对象上（封装了原始行为）的同名方法来轻松重建
+		const target = { 
+		 foo: 'bar' 
+		}; 
+		const handler = { 
+		// get: Reflect.get
+		 get() { 
+			return Reflect.get(...arguments); 
+		 } 
+		};
+		》想创建一个可以捕获所有方法，然后将每个方法转发给对应反射 API 的空代理，那
+		么甚至不需要定义处理程序对象
+		const target = {
+		 foo: 'bar' 
+		}; 
+		const proxy = new Proxy(target, Reflect);
+	》捕获器不变式
+		如果目标对象有一个不可配置且不可写的数据属性，那么在捕获器返回一个与该属性不同的
+		值时，会抛出 TypeError：
+		const target = {}; 
+		Object.defineProperty(target, 'foo', { 
+		 configurable: false, 
+		 writable: false, 
+		 value: 'bar' 
+		}); 
+		const handler = { 
+		 get() { 
+		 return 'qux'; 
+		 } 
+		}; 
+		const proxy = new Proxy(target, handler); 
+		console.log(proxy.foo); // TypeError
+	》可撤销代理(Proxy.revocable())
+		》有时候可能需要中断代理对象与目标对象之间的联系。
+		new Proxy()创建的普通代理，这种联系会在代理对象的生命周期内一直持续存在。
+		Proxy 也暴露了 revocable()方法，这个方法支持撤销代理对象与目标对象的关联。
+		撤销代理的操作是不可逆的。而且，撤销函数（revoke())是幂等的
+		const target = {
+		 foo: 'bar' 
+		}; 
+		const handler = { 
+		 get() { 
+		 return 'intercepted'; 
+		 } 
+		}; 
+		const { proxy, revoke } = Proxy.revocable(target, handler);
+	》实用反射 API
+		》反射 API 与对象 API 
+		在使用反射 API 时，要记住：
+		(1) 反射 API 并不限于捕获处理程序；
+		(2) 大多数反射 API 方法在 Object 类型上有对应的方法。
+		通常，Object 上的方法适用于通用程序，而反射方法适用于细粒度的对象控制与操作。
+		》状态标记
+		很多反射方法返回称作“状态标记”的布尔值，表示意图执行的操作是否成功。有时候，状态标记
+		比那些返回修改后的对象或者抛出错误（取决于方法）的反射 API 方法更有用
+		const o = {}; 
+		if(Reflect.defineProperty(o, 'foo', {value: 'bar'})) { 
+		 console.log('success'); 
+		} else { 
+		 console.log('failure'); 
+		}
+		》用一等函数替代操作符
+		》安全地应用函数
+		在通过 apply 方法调用函数时，被调用的函数可能也定义了自己的 apply 属性（虽然可能性极小）。
+		为绕过这个问题，可以使用定义在 Function 原型上的 apply 方法，比如：
+		Function.prototype.apply.call(myFunc, thisVal, argumentList); 
+		这种可怕的代码完全可以使用 Reflect.apply 来避免：
+		Reflect.apply(myFunc, thisVal, argumentsList);
+	》代理另一个代理
+	》代理的问题与不足
+		》代理中的 this：如果目标对象依赖于对象标识，那就可能碰到意料之外的问题
+		const wm = new WeakMap(); 
+		class User { 
+		 constructor(userId) { 
+		 wm.set(this, userId); 
+		 } 
+		 set id(userId) { 
+		 wm.set(this, userId); 
+		 } 
+		 get id() { 
+		 return wm.get(this); 
+		 } 
+		} 
+		由于这个实现依赖 User 实例的对象标识，在这个实例被代理的情况下就会出问题：
+		const user = new User(123); 
+		console.log(user.id); // 123 
+		const userInstanceProxy = new Proxy(user, {}); 
+		console.log(userInstanceProxy.id); // undefined
+		要解决这个问题，就需要重新配置代理，把代理 User 实例改为代理 User 类本身。
+		之后再创建代理的实例就会以代理实例作为 WeakMap 的键了：
+		const UserClassProxy = new Proxy(User, {}); 
+		const proxyUser = new UserClassProxy(456); 
+		console.log(proxyUser.id);
+		》代理与内部槽位：有些 ECMAScript 内置类型可能会依赖代理无法控制的机制，
+			结果导致在代理上调用某些方法会出错
+		一个典型的例子就是 Date 类型。根据 ECMAScript 规范，Date 类型方法的执行依赖 this 值上的
+		内部槽位[[NumberDate]]。代理对象上不存在这个内部槽位，而且这个内部槽位的值也不能通过普通
+		的 get()和 set()操作访问到，于是代理拦截后本应转发给目标对象的方法会抛出 TypeError：
+		const target = new Date(); 
+		const proxy = new Proxy(target, {}); 
+		console.log(proxy instanceof Date); // true 
+		proxy.getDate(); // TypeError: 'this' is not a Date object
+
+》9.2代理捕获器与反射方法(详见P274-P283)
+	》代理可以捕获 13 种不同的基本操作。这些操作有各自不同的反射 API 方法、参数、关联 ECMAScript
+	操作和不变式
+
+》9.3代理模式
+	使用代理可以在代码中实现一些有用的编程模式
+	》跟踪属性访问
+	》隐藏属性
+	》属性验证
+	》函数与构造函数参数验证
+	》数据绑定与可观察对象
+	代理的应用场景是不可限量的远不限于上面所述
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
