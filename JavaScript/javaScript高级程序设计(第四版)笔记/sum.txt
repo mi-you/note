@@ -260,3 +260,61 @@
 》Math.min(),Math.max()、Math.ceil()、Math.floor()、Math.round()、
 	Math.fround():返回数值最接近的单精度(32位)浮点表示
 	window.crypto.getRandomValues(typeArray)获取密码学要求的安全的随机值，参数是typeArray
+
+
+
+
+
+
+
+
+
+/*************************************************************h5扩展*****************************************************/
+
+
+/************************************************************************************************************************/
+》performence.now() //DOMHighResTimeStamp
+	start = performence.now()
+	end = performence.now()
+	end - start
+
+
+/************************************************************ 19 表单 ***************************************************/
+》表单提交
+	<input type='submit' value='提交' />
+	<button type='submit'>提交</button>
+	<input type='image' src='./a.jpg' />
+
+》input 的size属性可以指定文本框的宽度(字数)
+	<input size='10' maxLength='50' />
+》textarea 不能在HTML中指定最大允许字符数
+》两种文本框都支持一个名为select()的方法用于选中全部的文本与之相对，还有一个select事件
+	textbox.value.substring(textbox.selecttionStart,textbox.selecttionEnd)
+	调用select()后文本框会自动获取焦点(Opera除外)
+》setSelectionRange()可以用于选中部分文本：参数第一个字符的索引和停止选择的字符索引
+	textbox.setSelectionRange(0,textbox.value.length)
+	要想看到选择则必须在调用setSelectionRange()之前或之后给文本设置焦点
+》剪切板事件
+	》beforecopy:复制操作发生前
+	》copy:复制操作发生时
+	》beforecut:剪切操作发生前
+	》cut:剪切操作发生时
+	》beforepaste:粘贴操作发生前触发
+	》paste:粘贴操作发生时触发
+》pattern属性可以验证输入值是否有效，结果可以在元素的checkValidity()上查看，validity可以查看具体的无效原因
+	在表单form上调用checkValidity()可以确认整个表单是否有效,
+	在表单form上添加novalidate属性或通过js将改属性设置为true可以避免表单验证
+》select 中的size为选框的可见行数
+
+
+
+
+
+
+
+
+
+
+
+
+
