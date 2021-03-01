@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+
+</head>
+<body>
+  <iframe id='iframe'></iframe>
+  <ul id='ul'>
+    <li>apple</li>
+    <li>banana</li>
+    <li>orange</li>
+    <li id='pli'>
+      cherry
+      <div is='collapse-ul' id='cul' title='自定义'>hhhhhhhh</div>
+    </li>
+  </ul>
+  <ul>
+    <li id='nli'>emmm</li>
+  </ul>
+  <template id='template'>
+    <div>
+      <label>LABEL</label>
+      <div>CONTENT</div>
+    </div>
+  </template>
+  <script>
+    const template = document.getElementById('template')
+  </script>
+  <script src="./js2.js"></script>
+  <script>
+    const u = document.createElement('collapse-ul')
+    document.body.appendChild(u)
+
+    // 
+    const pli = document.getElementById('pli');
+    const cul = document.getElementById('cul');
+    const iframe = document.getElementById('iframe').contentWindow;
+
+    iframe.document.body.appendChild(document.adoptNode(cul))
+
+  </script>
+  <script>
+    let book = { 
+      title: "Professional JavaScript", 
+      authors: [ 
+        "Nicholas C. Zakas", 
+        "Matt Frisbie" 
+      ], 
+      edition: 4,
+      year: 2017 
+    }; 
+    let jsonText = JSON.stringify(book, (key, value) => { 
+        switch(key) { 
+        case "authors": 
+        return value.join(",") 
+        case "year": 
+        return 5000; 
+        case "edition": 
+        return undefined; 
+        default: 
+        return value; 
+        } 
+    });
+    console.log(JSON.stringify({
+      name:'mi',
+      value:{
+        age:1,
+        sex:'x'
+      },
+      toJSON:function(){
+        return 'ttt'
+    }},null,'########'))
+  </script>
+</body>
+</html>
