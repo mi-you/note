@@ -201,6 +201,8 @@
 		》Math.fround() //返回数值最接近的单精度(32位)浮点表示
 		》indow.crypto.getRandomValues(typeArray) //获取密码学要求的安全的随机值，参数是typeArray
 		》...
+
+		
 		
 		
 		
