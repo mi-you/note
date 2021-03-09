@@ -1,2 +1,0 @@
-》dataset：Apache ECharts (incubating)TM 4 开始支持了 dataset 组件用于单独的数据集声明，从而数据可以单独管理，被多个组件复用，并且可以基于数据指定数据到视觉的映射
-	》图片：dataset
