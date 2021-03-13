@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <script type="module">
+    import A from './冒泡排序.js';
+    import B from './简单选择排序.js';
+    import C from './直接插入排序.js';
+    import D from './堆排序.js';
+    import E from './归并排序_递归.js';
+    import F from './归并排序_迭代.js';
+    import G from './快速排序_递归.js';
+    import H from './快速排序_尾递归.js';
+    import I from './快排+插入.js';
+    
+    const arr = Array.from({length:40000}).map(v => parseInt(Math.random() * 100000));
+    for (const fn of [A,B,C,D,E,F,G,H,I]) {
+      let timeStart = performance.now();
+      fn(arr)
+      let timeEnd = performance.now();
+      console.log(`排序耗时：${timeEnd-timeStart}ms`)
+    }
+  </script>
+</body>
+</html>
