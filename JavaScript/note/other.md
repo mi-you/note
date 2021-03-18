@@ -25,13 +25,25 @@
 		return fibb(n-1) + fibb(n-2)
 	}
 ```
-## `performence.now()` // `DOMHighResTimeStamp`
+## `performance.now()` // `DOMHighResTimeStamp`
 ```javascript
 	let start,end;
-	start = performence.now()
+	start = performance.now()
 	// ...
-	end = performence.now()
+	end = performance.now()
 	end - start
+```
+# 实现sleep
+```javascript
+	async function sleep(delay) { 
+		return new Promise((resolve) => setTimeout(resolve, delay)); 
+	}
+	async function foo() { 
+		const t0 = Date.now(); 
+		await sleep(1500); // 暂停约 1500 毫秒
+		console.log(Date.now() - t0); 
+	} 
+	foo(); // 1502
 ```
 
 
