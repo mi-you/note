@@ -14,6 +14,8 @@
 //   },1000)
 // }
 
+const { resolve } = require("node:path")
+
 // const generator = function * (){
 //   console.log('start')
 //   let resultA = yield asyncA()
@@ -38,26 +40,36 @@
 //   console.log(v)
 // }
 
-for (const v of (function*fn(){
-  yield* [1,2,3,4,5]
-})()) {
-  console.log(v)
-}
-for (const v of (function*fn(){
-  console.log(yield* {
-    [Symbol.iterator](){
-      let n = 4
-      return {
-        next(){
-          if(n){
-            return {done:false,value:n--}
-          }else{
-            return {done:true,value:'end'}
-          }
-        }
-      }
-    }
-  })
-})()) {
-  console.log(v)
-}
+// for (const v of (function*fn(){
+//   yield* [1,2,3,4,5]
+// })()) {
+//   console.log(v)
+// }
+// for (const v of (function*fn(){
+//   console.log(yield* {
+//     [Symbol.iterator](){
+//       let n = 4
+//       return {
+//         next(){
+//           if(n){
+//             return {done:false,value:n--}
+//           }else{
+//             return {done:true,value:'end'}
+//           }
+//         }
+//       }
+//     }
+//   })
+// })()) {
+//   console.log(v)
+// }
+
+// function *asy(){
+//   let i = yield new Promise((resolve,reject) => {setTimeout(() => resolve(1),1000)})
+//   yield new Promise((resolve,reject) => {setTimeout(() => resolve(++i),1000)})
+//   yield new Promise((resolve,reject) => {setTimeout(() => resolve(++i),1000)})
+//   yield new Promise((resolve,reject) => {setTimeout(() => resolve(++i),1000)})
+// }
+// for await (iterator of asy()) {
+//   console.log(iterator)
+// }
