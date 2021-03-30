@@ -74,3 +74,13 @@ function htmlEscape(text) {
 ##  [浏览器垃圾回收](https://www.jianshu.com/p/0cdf8f60400d)
 - [标记清除](https://blog.csdn.net/a8725585/article/details/106836648)
 - 引用计数
+
+## 实现0.5px的线
+- ```
+    width: 1000px;
+    height: 1px;
+    background-color: red;
+    border-bottom: 1px solid green;
+    box-sizing: border-box;
+    transform: scale(.5);
+```
