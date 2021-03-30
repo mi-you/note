@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+  <style>
+    body{
+      position: relative;
+    }
+    #box{
+      position: absolute;
+      width: 100px;
+      height: 100px;
+      background-color: pink;
+    }
+  </style>
+</head>
+<body>
+  <div id='box'></div>
+  <script>
+    const box = document.getElementById('box')
+    let dragFlag = false,
+    position = [0,0];
+    function moveEvent(clientX,clientY){
+      box.style.left = clientX - position[0] + 'px'
+      box.style.top = clientY - position[1] + 'px'
+    }
+    box.addEventListener('mousedown',event => {
+      const { clientX,clientY } = event;
+      const { top,left } = box.getBoundingClientRect();
+      dragFlag = true
+      position = [clientX - left,clientY - top]
+    })
+    document.addEventListener('mouseup',e => {
+      dragFlag = false
+    })
+    document.addEventListener('mousemove',e => {
+      if(!dragFlag) return
+      const {clientX,clientY} = e;
+      moveEvent(clientX,clientY)
+    })
+
+
+
+
+
+
+
+
+  </script>
+  <script>
+    function deepClone(obj,map = new WeakMap()){
+      if(obj instanceof RegExp) return new RegExp(obj);
+      if(obj instanceof Date) return new Date(obj);
+      if(obj === null || typeof obj !== 'object') return obj;
+      debugger
+      if(map.has(obj)) return map.get(obj);
+      let emptyObj = new obj.constructor();
+      map.set(obj,emptyObj);
+      
+      for(let key in obj){
+        if(obj.hasOwnProperty(key)){
+          emptyObj[key] = deepClone(obj[key],map)
+        }
+      }
+      return emptyObj
+    }
+    let a = {a:'a'},b = {b:'b'};
+    a.b = b;
+    b.a = a;
+    console.log(deepClone(a))
+
+  </script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src='//at.alicdn.com/t/font_2442434_d3gkkbrmsyw.js'></script>
+  <link rel="stylesheet" href='./symbol/symbol.css'></style>
+  <title>Document</title>
+  <style>
+    #div{
+      background-color: aqua;
+    }
+    #div2{
+      width: 400px;
+      height: 400px;    
+      background-color: beige;
+      float:left;
+    }
+  </style>
+</head>
+<body>
+  <div id='div'>
+    我的是哦啊覅但覅的覅飞机看风景<div id='div2'></div>发放的发放日方法是
+  </div>
+  <iframe frameborder='0' width="400px" height="300px" src="./symbol/symbol.html"></iframe>
+  <script src='./index.js'></script>
+  <script>
+    function decodeString(str){
+      let arr = str.split(''),queue = [],temp = '',result = '',childStr = '';
+      for(let i = 0,len = arr.length;i<len;i++){
+          temp = arr.unshift();
+          if(temp === ']'){
+            for(;queue.length;){
+
+            }
+          }else{
+            queue.push(temp)
+          }
+      }
+    }
+  
+    function add(){
+      const _args = Array.of(...arguments);
+      const _adder = function(){
+        _args.push(...arguments);
+        return _adder
+      };
+      _adder.toString = function(){
+        return _args.reduce((prev,next) => prev + next)
+      }
+      return _adder
+    }
+    let a = add(1)(2)(3)(4),
+      b = add(1,2)(3,4),
+      c = add(1,2,3,4),
+      d = add(1)(2,3,4);
+    console.log(add(1)(2)(3)(4))
+    console.log(b == 10,c,d, typeof add(1)(2)(3),add(1)(2)(3))
+
+  </script>
+</body>
+</html>

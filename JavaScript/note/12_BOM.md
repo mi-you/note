@@ -18,7 +18,7 @@
 - `window.devicePixelRatio`：物理像素与 CSS 像素之间的转换比率由`window.devicePixelRatio` 属性提供。如从 1920×1080 转换为 640×320 的设备，`window.devicePixelRatio` 的值就是 3
 - `innerWidth`、`innerHeight`、`outerWidth`、`outHeight`
 	- `innerWidth`、`innerHeight`：返回浏览器窗口中页面视口的大小（不包含浏览器边框和工具栏）
-	- `outerWidth`、outerHeight：返回浏览器窗口自身的大小（不管是在最外层 window 上使用，还是在窗格`<frame>`中使用）
+	- `outerWidth`、`outerHeight`：返回浏览器窗口自身的大小（不管是在最外层 window 上使用，还是在窗格`<frame>`中使用）
 - `document.documentElement.clientWidth`、`document.documentElement.clientHeight`、`document.body.clientWidth`、`document.documentElement.clientHeight`：返回页面视口的宽度和高度。
 > `innerHeight`，`innerWidth`是包含滚动条的,`clientHeight`,`clientWidth`是不包含滚动条的
 - `document.compatMode`
