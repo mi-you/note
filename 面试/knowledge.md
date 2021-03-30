@@ -53,7 +53,7 @@
 > - **验证 HTTP Referer 字段**  
 根据 HTTP 协议，在 HTTP 头中有一个字段叫 Referer，它记录了该 HTTP 请求的来源地址。因此，要防御 CSRF 攻击，如银行网站只需要对于每一个转账请求验证其 Referer 值，如果是以 bank.example 开头的域名，则说明该请求是来自银行网站自己的请求，是合法的。如果 Referer 是其他网站的话，则有可能是黑客的 CSRF 攻击，拒绝该请求。
 > - 在请求地址中添加 token 并验证
-> - 在 HTTP 头中自定义属性并验证。
+> - 在 HTTP 头中自定义属性并验证。 
 ## xss （cross-site-scripting）
 ```javascript
 function htmlEscape(text) { 
