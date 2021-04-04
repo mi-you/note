@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<script>
+    //Promise 新建后就会立即执行
+
+    function timeout(ms){
+        return new Promise((resolve,reject) => {
+            setTimeout(resolve,ms,"done");
+        })
+    }
+
+    timeout(100).then(value => {
+        console.log(value);
+    })
+
+    //Promise 对象的错误具有“冒泡”性质，会一直向后传递，
+    // 直到被捕获为止。也就是说，错误总是会被下一个catch语句捕获。
+    //getJSON('/post/1.json').then(function(post) {
+     //   return getJSON(post.commentURL);
+    //}).then(function(comments) {
+    //    // some code
+    //}).catch(function(error) {
+        // 处理前面三个Promise产生的错误
+    //});
+
+
+    //一般总是建议，Promise 对象后面要跟catch方法，
+    // 这样可以处理 Promise 内部发生的错误。catch方法返回的还是一个 Promise 对象，
+    // 因此后面还可以接着调用then方法。如果没有报错，则会跳过catch方法。
+    const someAsyncThing = function() {
+        return new Promise(function(resolve, reject) {
+            // 下面一行会报错，因为x没有声明
+            resolve(x + 2);
+        });
+    };
+
+    someAsyncThing()
+        .catch(function(error) {
+            console.log('oh no', error);
+        })
+        .then(function() {
+            console.log('carry on');
+        });
+</script>
+</body>
+</html>

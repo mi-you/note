@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+<h1>变量的结构赋值</h1>
+</div>
+<script>
+//数组的解构赋值
+    console.log("数组的解构赋值");
+    let [a,b,c] = [1,2,3]
+    console.log(a, b, c)
+    let [foo,[[bar],baz]] = ["foo",[["bar"],"baz"]]
+    console.log(foo, bar, baz);
+
+    //交换ab的值
+    console.log(a, b);
+    [a,b] = [b,a]
+    console.log(a, b);
+
+    //指定默认值
+    function f(){
+        console.log('我执行了')
+        return 2
+    }
+    let [x = f(),y = 3] = [1]//由于x有值1所以f函数并不会执行
+    console.log(x, y)
+    let [z,p = z] = [2]
+    console.log(z, p);
+//对象的解构赋值
+    console.log("对象的解构赋值");
+    let {fo,ba} = {fo:'aaa',ba:'bb'}
+    console.log(fo,ba);
+    let{foy:fooo} = {foy:'aaa',ba:'bb'}
+    console.log(fooo) //这里的foy是未定义的
+    //指定默认值
+    let {fot = "fo",bat} = {}
+    console.log(fot,bat);
+    //如果要将一个已经声明的变量用于解构赋值，必须非常小心。因为 JavaScript 引擎会将{x}理解成一个代码块，
+    //从而发生语法错误。只有不将大括号写在行首，避免 JavaScript 将其解释为代码块，才能解决这个问题。
+    ({fo,ba} = {fo:'aaaaa',ba:'bbbbb'})
+    console.log(fo, ba);
+    //由于数组本质是特殊的对象，因此可以对数组进行对象属性的解构。
+    let arr = [1, 2, 3];
+    let {0 : first, [arr.length - 1] : last} = arr;
+    console.log(first, last);
+    console.log("abcdefg"[2])
+
+
+</script>
+</body>
+</html>

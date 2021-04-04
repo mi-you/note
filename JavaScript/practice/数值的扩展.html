@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+
+</div>
+<script>
+    //ES6 提供了二进制和八进制数值的新的写法，分别用前缀0b（或0B）和0o（或0O）表示。
+    console.log(0b111110111 === 503); // true
+    console.log(0o767 === 503); // true
+
+    //ES6 在Number对象上，新提供了Number.isFinite()和Number.isNaN()两个方法。
+    //它们与传统的全局方法isFinite()和isNaN()的区别在于，传统方法先调用Number()将非数值的值转为数值，
+    //再进行判断，而这两个新方法只对数值有效，Number.isFinite()对于非数值一律返回false,
+    // Number.isNaN()只有对于NaN才返回true，非NaN一律返回false
+</script>
+</body>
+</html>

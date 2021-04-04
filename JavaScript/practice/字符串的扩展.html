@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div id="app">
+    <h1>字符串的扩展</h1>
+</div>
+<script>
+    console.log("\u0061");//码点在0000-ffff之间，超过需要用双字节表示
+
+    //js共有六种方式表示一个字符串
+    console.log('\z' === 'z');
+    console.log('\172' === 'z');
+    console.log('\x7A' === 'z');
+    console.log('\u007A' === 'z');
+    console.log('\u{7A}' === 'z');
+
+    //es6为字符串添加了遍历器接口
+    for(let codePoint of "foo"){
+        console.log(codePoint);
+    }
+    //js规定有5个字符不能在字符串里直接使用，只能使用转义形式
+    //-U+005c:反斜杠
+    //-U+000D:回车
+    //-U+2028：行分隔符
+    //-U+2029:段分隔符
+    //-U+000A:换行符
+
+    JSON.parse('"\u2028"')
+    console.log(JSON.stringify()
+    eval("'\u2029'")
+
+</script>
+</body>
+</html>
