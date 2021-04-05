@@ -4,7 +4,7 @@
 - 工作线程：工作线程：也称幕后线程，这个线程可能存在于浏览器或js引擎内，与主线程是分开的，处理文件读取、网络请求等异步事件。
 - 任务队列
   - 宏任务队列：setTimeout、setInterval、DOM、Ajax
-  - 微任务队列：Promise、async/awite、MutaionObserver、process.nextTick(Node.js 环境)
+  - 微任务队列：Promise、async/await、MutationObserver、process.nextTick(Node.js 环境)
 ## 函数柯里化
   - 把多参函数转化为单参函数
   ```javascript
