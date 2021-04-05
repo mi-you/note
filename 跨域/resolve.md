@@ -4,7 +4,7 @@
 	- 需要前后端配合，只支持get,不安全
 	- ?callback=functionName
 	
-- cros
+- cors
 	- 后端设置请求头`Access-Control-Allow-Origin:*;`或指定某一特定的域。`*`不能接受`cookie`
 	- 前端如果需要可以设置`Access-Control-Allow-Credential:true;`
 	
