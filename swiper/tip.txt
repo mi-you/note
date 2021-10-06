@@ -1,2 +1,0 @@
-》loop:true
-	》初始化时slide数不能为空
