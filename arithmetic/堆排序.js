@@ -1,32 +1,40 @@
-function sort(arr){
-  // 待排序数组调整为堆结构
-  for(let i = parseInt(arr.length/2);i>0;i--){
-    heapAdjust(arr,i,arr.length)
-  }
-  // 将堆顶的值与末尾的值交换，之后调整除最后一个元素之外的元素为一个新的堆结构
-  for(let i = arr.length; i > 1;i--){
-    swapAB(arr,0,i-1)
-    heapAdjust(arr,1,i-1)
-  }
-  console.log('堆排序',arr);
-}
+/* 
+    思想：先将数据调整为大顶堆，之后把堆顶的数据和队尾的数据交换，然后将length -1的数据调整为大顶堆
+    时间复杂度：O(nlogn)
+*/
 
-function swapAB(arr,prev,next){
-  let temp = arr[prev];
-  arr[prev] = arr[next];
-  arr[next] = temp;
-}
-function heapAdjust(arr,index,length){
-  let temp = arr[index-1];
-  for(let i = index * 2;i <= length;i = i*2){
-    if(i<length && arr[i-1] < arr[i]){
-      i++
+const data = [9, 8, 7, 6, 5, 4, 3, 2, 1, 0, 11, 44, 55, 66, 88, 11];
+
+function heapSort(arr) {
+    const data = [...arr];
+    // 调整为大顶堆
+    for (let i = data.length / 2 | 0; i > 0; i--){
+        heapAdjust(data, i - 1, data.length);
     }
-    if(arr[i-1] > temp){
-      arr[index-1] = arr[i-1];
-      index = i
+    console.log([...data])
+    for (let j = data.length - 1; j > 0; j--){
+        console.log(j,'=>',[...data])
+        // 交换对顶和堆尾元素
+        let temp = data[j];
+        data[j] = data[0];
+        data[0] = temp;
+        // 重新调整为大顶堆
+        heapAdjust(data, 0, j);
     }
-  }
-  arr[index-1] = temp;
+
+    return data
 }
-export default sort
+function heapAdjust(data, site, length) {
+    let temp = data[site];
+    for (let i = (site + 1) * 2 - 1; i < length; i = (i + 1) * 2 - 1) {
+        if (i + 1 < length && data[i + 1] >= data[i] && data[i + 1] > temp) {
+            data[site] = data[i + 1];
+            site = ++i
+        } else if (data[i] > temp) {
+            data[site] = data[i]
+            site = i
+        }
+    }
+    data[site] = temp
+}
+console.log('heapSort',heapSort(data))

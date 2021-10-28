@@ -8,6 +8,8 @@
   <style>
     body{
       position: relative;
+      padding: 0;
+      margin: 0;
     }
     #box{
       position: absolute;
@@ -30,6 +32,7 @@
     box.addEventListener('mousedown',event => {
       const { clientX,clientY } = event;
       const { top,left } = box.getBoundingClientRect();
+      box.innerText = `clientX:${clientX},clientY:${clientY}\ntop:${top},left:${left}`
       dragFlag = true
       position = [clientX - left,clientY - top]
     })
@@ -41,37 +44,6 @@
       const {clientX,clientY} = e;
       moveEvent(clientX,clientY)
     })
-
-
-
-
-
-
-
-
-  </script>
-  <script>
-    function deepClone(obj,map = new WeakMap()){
-      if(obj instanceof RegExp) return new RegExp(obj);
-      if(obj instanceof Date) return new Date(obj);
-      if(obj === null || typeof obj !== 'object') return obj;
-      debugger
-      if(map.has(obj)) return map.get(obj);
-      let emptyObj = new obj.constructor();
-      map.set(obj,emptyObj);
-      
-      for(let key in obj){
-        if(obj.hasOwnProperty(key)){
-          emptyObj[key] = deepClone(obj[key],map)
-        }
-      }
-      return emptyObj
-    }
-    let a = {a:'a'},b = {b:'b'};
-    a.b = b;
-    b.a = a;
-    console.log(deepClone(a))
-
   </script>
 </body>
 </html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <input id='input'/><br />
+  <label id='label1'>用户输入字符串</label>
+  <div id='div1'></div>
+  <label id='label2'>替换后的值</label>
+  <div id='div2'>&#039</div>
+  <script>
+    function htmlEscape(text) { 
+      return text.replace(/[<>"&]/g, function(match, pos, originalText) { 
+        switch(match) { 
+          case "<": 
+            return "&lt;"; 
+          case ">": 
+            return "&gt;"; 
+          case "&": 
+            return "&amp;"; 
+          case "\"": 
+            return "&quot;"; 
+         } 
+      })
+    } 
+    input.addEventListener('change',e => {
+      let value = e.target.value;
+      div1.innerText = value
+      let trans = htmlEscape(value)
+      console.log(trans)
+      div2.innerText = trans
+    })
+
+  </script>
+</body>
+</html>
