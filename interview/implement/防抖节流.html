@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src='//at.alicdn.com/t/font_2442434_d3gkkbrmsyw.js'></script>
+  <link rel="stylesheet" href='./symbol/symbol.css'></style>
+  <title>Document</title>
+  <style>
+    #div{
+      width: 400px;
+      height: 400px;    
+      background-color: beige;
+      word-break: break-all;
+    }
+    #div span{
+      color:red;
+    }
+  </style>
+</head>
+<body>
+  <div id='div'></div>
+  <script>
+    // throttle and debounce
+    function throttle(fn, delay = 100) {
+      let flag = true
+      return (...arg) => {
+        'use static'
+        if (flag) {
+          flag = false
+          window.requestAnimationFrame(() => fn(...arg))
+          setTimeout(() => flag = true, delay)
+        }
+      }
+    }
+    function debounce(fn, delay = 100) {
+      let timer = null
+      return (...arg) => {
+        clearTimeout(timer)
+        timer = setTimeout(() => {
+          window.requestAnimationFrame(() => fn(...arg))
+        }, delay)
+      }
+    }
+    const move = debounce((event) => {
+      event.target.innerHTML += '<span>debounce<span>'
+    })
+    const move2 = throttle(event => {
+      event.target.innerHTML += 'throttle '
+    })
+    document.getElementById('div').addEventListener('mousemove', move)
+    document.getElementById('div').addEventListener('mousemove', move2)
+
+  </script>
+</body>
+</html>
