@@ -1,0 +1,4 @@
+/* 0.5px 线的核心  */
+div {
+  transform: scale(0.5);
+}
