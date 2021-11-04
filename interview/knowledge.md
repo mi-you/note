@@ -50,3 +50,15 @@
 
 - 大致概念：https://www.jianshu.com/p/576dbf44b2ae
 - 使用方式原理：https://cloud.tencent.com/developer/article/1453903
+
+## [tree shaking](https://juejin.cn/post/6844903544756109319)
+
+- Dead Code 一般具有以下几个特征
+  - 代码不会被执行，不可到达
+  - 代码执行的结果不会被用到
+  - 代码只会影响死变量（只写不读）
+- 传统编译型的语言中，都是由编译器将 Dead Code 从 AST（抽象语法树）中删除，那 javascript 中是由谁做 DCE 呢？首先肯定不是浏览器做 DCE，因为当我们的代码送到浏览器，那还谈什么消除无法执行的代码来优化呢，所以肯定是送到浏览器之前的步骤进行优化。
+- ES6 module 特点: ES6 模块依赖关系是确定的，和运行时的状态无关，可以进行可靠的静态分析，这就是 tree-shaking 的基础。
+  - 只能作为模块顶层的语句出现
+  - import 的模块名只能是字符串常量
+  - import binding 是 immutable 的
