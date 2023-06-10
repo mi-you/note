@@ -1,0 +1,7 @@
+- VM 官网下载虚拟机 https://www.vmware.com/products/workstation-pro/workstation-pro-evaluation.html
+  - 激活密钥： MC60H-DWHD5-H80U9-6V85M-8280D
+  - https://gist.github.com/PurpleVibe32/1e9b30754ff18d69ad48155ed29d83de
+- 下载 ios 镜像
+  - macOs big sur 11.4: magnet:?xt=urn:btih:6abbdca1a44321f789ba38fdfc4cfbfbf40e8900
+  - https://sysin.org/blog/macOS-Big-Sur/#1-ISO-%E6%A0%BC%E5%BC%8F%E8%BD%AF%E4%BB%B6%E5%8C%85%EF%BC%88%E6%8E%A8%E8%8D%90%EF%BC%89
+- 下载解锁工具：https://github.com/DrDonk/unlocker/releases
