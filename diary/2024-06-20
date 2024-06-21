@@ -1,0 +1,18 @@
+### react 项目中 hooks 的依赖项不能自动提示和填充了
+执行`npx eslint xxx.tsx > log1` 查看是否能够输出预期的错误或警告。这可以帮助进一步确定问题是否与 VSCode 或其 ESLint 插件的集成有关，还是与 ESLint 配置或项目设置有关。
+- 有错误或警告日志
+  - 在 VSCode 中，打开 "View" -> "Output"，然后从下拉菜单中选择 "ESLint"，看是否有任何错误或警告消息。这些信息可能会提供进一步的线索。
+- 没有错误或警告日志
+  - `npx eslint --print-config xxx.tsx > log2`查看针对特定文件的有效配置。看看是否有eslint相关的配置
+- 正常的配置检查
+  1. 检查vscode的eslint插件是否启用
+  2. 检查项目中eslint-plugin-react-hooks是被安装
+  3. 检查.eslintrc 文件看看是否配置类似如下规则
+  ```json
+  {
+    "rules": {
+        "react-hooks/rules-of-hooks": "error",
+        "react-hooks/exhaustive-deps": "warn"
+    }
+  }
+  ```
