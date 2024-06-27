@@ -1,0 +1,3 @@
+### 在git rebase时，需要再两个分支间来回切换。使用checkout xxx还需要输入分支名。git 提供了方面的命令
+- `git switch -`: 快速切换上一个。等于`git swithc @{-1}`
+- `git switch @{-N}`: 通用
